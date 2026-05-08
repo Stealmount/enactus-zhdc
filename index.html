@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enactus ZHDC — Creating Real Impact</title>
+  <meta name="description"
+    content="Enactus ZHDC is the entrepreneurship society of Zakir Husain Delhi College, New Delhi. Student entrepreneurs building ventures that change lives.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --white: #f5f5f0;
+      --yellow: #FFE500;
+      --d: #111;
+      --m: #333;
+      --g: #666;
+      --fd: 'Bebas Neue', sans-serif;
+      --fm: 'Space Mono', monospace;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1)
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      scroll-behavior: auto
+    }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--fm);
+      cursor: none;
+      overflow-x: hidden
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit
+    }
+
+    /* grain */
+    #grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9990;
+      pointer-events: none;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 150px 150px
+    }
+
+    /* progress */
+    #scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: var(--yellow);
+      width: 0%;
+      z-index: 9999;
+      pointer-events: none
+    }
+
+    /* cursor */
+    #cursor-dot {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--yellow);
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: difference;
+      transition: opacity .2s
+    }
+
+    #cursor-ring {
+      position: fixed;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1.5px solid var(--yellow);
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--fd);
+      font-size: 11px;
+      letter-spacing: .1em;
+      color: var(--black);
+      transition: width .3s var(--ease), height .3s var(--ease), background .3s, border-radius .3s, border-color .3s
+    }
+
+    #cursor-ring.hov {
+      width: 70px;
+      height: 70px;
+      background: rgba(255, 229, 0, .1)
+    }
+
+    #cursor-ring.view {
+      width: 80px;
+      height: 80px;
+      border-radius: 999px;
+      background: var(--yellow);
+      border-color: var(--yellow)
+    }
+
+    #cursor-ring.view::after {
+      content: 'VIEW →'
+    }
+
+    #cursor-ring.head {
+      width: 80px;
+      height: 80px;
+      border-radius: 999px;
+      background: var(--yellow);
+      border-color: var(--yellow)
+    }
+
+    #cursor-ring.head::after {
+      content: 'ENACTUS'
+    }
+
+    /* preloader */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 11000;
+      display: flex;
+      flex-direction: column
+    }
+
+    .pre-top,
+    .pre-bot {
+      flex: 1;
+      background: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .pre-top span {
+      font-family: var(--fd);
+      font-size: 3rem;
+      color: var(--yellow);
+      letter-spacing: .25em
+    }
+
+    /* navbar */
+    #nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1.2rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1.5px solid var(--yellow);
+      transition: background .3s
+    }
+
+    #nav.scrolled {
+      background: rgba(10, 10, 10, .97);
+      backdrop-filter: blur(8px)
+    }
+
+    .nav-logo {
+      font-family: var(--fd);
+      font-size: 1.4rem;
+      color: var(--yellow);
+      letter-spacing: .15em
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.2rem
+    }
+
+    .nav-links a {
+      font-family: var(--fm);
+      font-size: .62rem;
+      color: var(--g);
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      transition: color .25s
+    }
+
+    .nav-links a:hover {
+      color: var(--yellow)
+    }
+
+    #hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px
+    }
+
+    #hamburger span {
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: var(--yellow)
+    }
+
+    /* mobile menu */
+    #mob-menu {
+      position: fixed;
+      inset: 0;
+      background: var(--black);
+      z-index: 5000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .4s
+    }
+
+    #mob-menu.open {
+      opacity: 1;
+      pointer-events: all
+    }
+
+    #mob-menu a {
+      font-family: var(--fd);
+      font-size: 3.5rem;
+      color: var(--yellow);
+      letter-spacing: .1em;
+      transition: color .2s
+    }
+
+    #mob-menu a:hover {
+      color: var(--white)
+    }
+
+    #mob-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      background: none;
+      border: none;
+      color: var(--yellow);
+      font-size: 2rem;
+      cursor: pointer
+    }
+
+    /* hero */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1.4fr 0.6fr;
+      padding: 0 4rem;
+      padding-top: 88px;
+      align-items: center;
+      position: relative
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem
+    }
+
+    .hero-headline {
+      font-family: var(--fd);
+      font-size: clamp(5rem, 11vw, 11rem);
+      line-height: .88;
+      letter-spacing: .01em;
+      opacity: 0
+    }
+
+    .line-wrap {
+      overflow: hidden;
+      display: block
+    }
+
+    .line-inner {
+      display: block;
+      will-change: transform
+    }
+
+    .accent {
+      color: var(--yellow)
+    }
+
+    .hero-sub {
+      font-size: .75rem;
+      color: var(--g);
+      line-height: 1.9;
+      max-width: 360px;
+      opacity: 0;
+      transform: translateY(20px)
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      margin-top: .5rem
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: .2rem
+    }
+
+    .stat-num {
+      font-family: var(--fd);
+      font-size: 2rem;
+      color: var(--yellow);
+      line-height: 1
+    }
+
+    .stat-lbl {
+      font-size: .58rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: .15em
+    }
+
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding-top: 2rem;
+      padding-left: 2rem
+    }
+
+    .hero-card {
+      position: relative;
+      aspect-ratio: 3/2;
+      overflow: hidden;
+      filter: grayscale(1);
+      transition: filter .5s;
+      opacity: 0;
+      transform: translateY(40px)
+    }
+
+    .hero-card:hover {
+      filter: grayscale(0)
+    }
+
+    .card-label {
+      position: absolute;
+      top: .8rem;
+      left: .8rem;
+      font-size: .58rem;
+      font-family: var(--fm);
+      color: var(--white);
+      background: rgba(0, 0, 0, .65);
+      padding: .25rem .6rem;
+      letter-spacing: .15em;
+      z-index: 2;
+      opacity: 0
+    }
+
+    .scroll-ind {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .6rem
+    }
+
+    .scroll-ind span {
+      font-size: .52rem;
+      font-family: var(--fm);
+      color: var(--yellow);
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      writing-mode: vertical-rl
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 32px;
+      background: rgba(255, 229, 0, .3);
+      overflow: hidden
+    }
+
+    .scroll-line::after {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: var(--yellow);
+      animation: spulse 1.6s ease-in-out infinite
+    }
+
+    @keyframes spulse {
+      0% {
+        transform: translateY(-100%)
+      }
+
+      100% {
+        transform: translateY(100%)
+      }
+    }
+
+    /* achievement banner */
+    .ach-banner {
+      background: var(--yellow);
+      border-top: 2px solid #000;
+      border-bottom: 2px solid #000;
+      padding: 1.5rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem
+    }
+
+    .ach-left {
+      font-family: var(--fd);
+      font-size: 1.8rem;
+      color: #000;
+      letter-spacing: .05em
+    }
+
+    .ach-center {
+      font-family: var(--fm);
+      font-size: .7rem;
+      color: #000;
+      text-align: center;
+      line-height: 1.6
+    }
+
+    .ach-right {
+      font-family: var(--fm);
+      font-size: .62rem;
+      color: #333;
+      text-align: right;
+      white-space: nowrap
+    }
+
+    /* marquee */
+    .marquee {
+      background: var(--yellow);
+      border-top: 2px solid #000;
+      border-bottom: 2px solid #000;
+      padding: .8rem 0;
+      overflow: hidden
+    }
+
+    .marquee-track {
+      display: flex;
+      white-space: nowrap;
+      width: max-content;
+      animation: mq 28s linear infinite
+    }
+
+    .marquee-track span {
+      font-family: var(--fd);
+      font-size: 1.2rem;
+      letter-spacing: .2em;
+      color: #000;
+      padding: 0 1.5rem
+    }
+
+    @keyframes mq {
+      from {
+        transform: translateX(0)
+      }
+
+      to {
+        transform: translateX(-50%)
+      }
+    }
+
+    /* work */
+    #work {
+      padding: 8rem 4rem
+    }
+
+    .sec-eyebrow {
+      font-size: .6rem;
+      font-family: var(--fm);
+      color: var(--yellow);
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      margin-bottom: 1rem
+    }
+
+    .sec-title {
+      font-family: var(--fd);
+      font-size: clamp(3rem, 6vw, 6rem);
+      color: var(--white);
+      margin-bottom: 3rem
+    }
+
+    .proj-group-label {
+      font-family: var(--fm);
+      font-size: .58rem;
+      color: var(--yellow);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      margin: 3rem 0 .5rem;
+      padding-bottom: .5rem;
+      border-bottom: 1px solid #1a1a1a
+    }
+
+    .proj-group-label.muted {
+      color: #555
+    }
+
+    .project-row {
+      display: grid;
+      grid-template-columns: 90px 1fr auto;
+      align-items: center;
+      gap: 2rem;
+      padding: 2rem 0 2rem 0;
+      border-bottom: 1px solid #1a1a1a;
+      cursor: none;
+      position: relative;
+      transition: background .25s, padding-left .3s
+    }
+
+    .project-row:hover {
+      background: #111;
+      padding-left: 1.5rem
+    }
+
+    .project-row.concluded {
+      opacity: .7
+    }
+
+    .project-row.concluded:hover {
+      opacity: 1
+    }
+
+    .proj-num {
+      font-family: var(--fd);
+      font-size: 4rem;
+      color: #222;
+      line-height: 1;
+      transition: color .3s, -webkit-text-stroke .3s
+    }
+
+    .project-row:hover .proj-num {
+      color: transparent;
+      -webkit-text-stroke: 1px var(--yellow)
+    }
+
+    .proj-info {
+      display: flex;
+      flex-direction: column;
+      gap: .35rem
+    }
+
+    .proj-lead {
+      font-family: var(--fm);
+      font-size: .6rem;
+      color: var(--yellow);
+      letter-spacing: .15em;
+      text-transform: uppercase
+    }
+
+    .proj-name {
+      font-family: var(--fd);
+      font-size: 2.4rem;
+      color: var(--white);
+      letter-spacing: .02em;
+      line-height: 1
+    }
+
+    .proj-tagline {
+      font-family: var(--fm);
+      font-size: .65rem;
+      color: #888;
+      font-style: italic;
+      line-height: 1.5;
+      max-width: 500px
+    }
+
+    .proj-desc {
+      font-family: var(--fm);
+      font-size: .65rem;
+      color: var(--g);
+      line-height: 1.6;
+      max-width: 460px
+    }
+
+    .proj-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: .5rem
+    }
+
+    .proj-tag {
+      font-family: var(--fm);
+      font-size: .58rem;
+      color: #000;
+      background: var(--yellow);
+      padding: .25rem .75rem;
+      border-radius: 999px;
+      letter-spacing: .1em;
+      white-space: nowrap
+    }
+
+    .proj-since {
+      font-family: var(--fm);
+      font-size: .58rem;
+      color: #555;
+      letter-spacing: .1em
+    }
+
+    .proj-badge {
+      font-family: var(--fm);
+      font-size: .58rem;
+      color: #000;
+      background: var(--yellow);
+      padding: .25rem .75rem;
+      border-radius: 4px;
+      letter-spacing: .1em
+    }
+
+    /* hover images */
+    .hov-img {
+      position: fixed;
+      width: 260px;
+      aspect-ratio: 3/2;
+      pointer-events: none;
+      z-index: 500;
+      opacity: 0;
+      transform: scale(.85);
+      overflow: hidden;
+      border-radius: 3px;
+      filter: grayscale(0)
+    }
+
+    /* about */
+    #about {
+      padding: 10rem 4rem
+    }
+
+    .about-quote {
+      font-family: var(--fd);
+      font-size: clamp(2.2rem, 4vw, 4.2rem);
+      color: var(--white);
+      text-align: center;
+      max-width: 880px;
+      margin: 0 auto 8rem;
+      line-height: 1.15
+    }
+
+    .about-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem
+    }
+
+    .about-left .sec-eyebrow {
+      margin-bottom: 2rem
+    }
+
+    .about-left p {
+      font-family: var(--fm);
+      font-size: .75rem;
+      color: #999;
+      line-height: 1.9;
+      margin-bottom: 1.5rem
+    }
+
+    .values-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2.2rem
+    }
+
+    .val-num {
+      font-family: var(--fm);
+      font-size: .58rem;
+      color: var(--yellow);
+      letter-spacing: .2em;
+      margin-bottom: .3rem
+    }
+
+    .val-name {
+      font-family: var(--fd);
+      font-size: 2rem;
+      color: var(--white);
+      line-height: 1
+    }
+
+    .val-desc {
+      font-family: var(--fm);
+      font-size: .65rem;
+      color: var(--g);
+      letter-spacing: .08em;
+      margin-top: .2rem
+    }
+
+    /* impact */
+    #impact {
+      background: var(--yellow);
+      border-top: 2px solid #000;
+      border-bottom: 2px solid #000;
+      padding: 6rem 4rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem
+    }
+
+    .imp-item {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem
+    }
+
+    .imp-num {
+      font-family: var(--fd);
+      font-size: clamp(4rem, 8vw, 8rem);
+      color: #000;
+      line-height: 1
+    }
+
+    .imp-lbl {
+      font-family: var(--fm);
+      font-size: .65rem;
+      color: #333;
+      letter-spacing: .2em;
+      text-transform: uppercase
+    }
+
+    /* people */
+    #people {
+      padding: 8rem 4rem
+    }
+
+    .ppl-sub-eyebrow {
+      font-family: var(--fm);
+      font-size: .6rem;
+      color: var(--yellow);
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      margin-bottom: .8rem
+    }
+
+    .ppl-title {
+      font-family: var(--fd);
+      font-size: clamp(2.5rem, 5vw, 5rem);
+      color: var(--white);
+      margin-bottom: .5rem
+    }
+
+    .ppl-session {
+      font-family: var(--fm);
+      font-size: .62rem;
+      color: #555;
+      letter-spacing: .15em;
+      margin-bottom: 3rem
+    }
+
+    .people-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: 2rem 0;
+      border-bottom: 1px solid #1a1a1a;
+      cursor: default;
+      transition: padding-left .3s
+    }
+
+    .people-row:hover {
+      padding-left: .5rem
+    }
+
+    .ppl-role {
+      font-family: var(--fm);
+      font-size: .62rem;
+      color: var(--yellow);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      margin-bottom: .4rem
+    }
+
+    .ppl-name {
+      font-family: var(--fd);
+      font-size: 2.5rem;
+      color: var(--white);
+      line-height: 1;
+      transition: color .25s, transform .3s
+    }
+
+    .people-row:hover .ppl-name {
+      color: var(--yellow);
+      transform: translateX(8px)
+    }
+
+    .ppl-idx {
+      font-family: var(--fd);
+      font-size: 4rem;
+      color: #1a1a1a;
+      line-height: 1;
+      transition: -webkit-text-stroke .25s, color .25s
+    }
+
+    .people-row:hover .ppl-idx {
+      color: transparent;
+      -webkit-text-stroke: 1px var(--yellow)
+    }
+
+    .dept-sub {
+      margin-top: 6rem
+    }
+
+    .dept-sub .ppl-name {
+      font-size: 2rem
+    }
+
+    /* gallery */
+    #gallery {
+      padding: 8rem 4rem
+    }
+
+    .gal-subtitle {
+      font-family: var(--fm);
+      font-size: .7rem;
+      color: var(--yellow);
+      font-style: italic;
+      margin-top: .5rem;
+      margin-bottom: 3rem;
+      line-height: 1.6
+    }
+
+    .masonry {
+      column-count: 3;
+      column-gap: 14px
+    }
+
+    .gallery-item {
+      break-inside: avoid;
+      margin-bottom: 14px;
+      overflow: hidden;
+      position: relative;
+      filter: grayscale(1);
+      transition: filter .5s
+    }
+
+    .gallery-item:hover {
+      filter: grayscale(0)
+    }
+
+    .gallery-item img {
+      display: block;
+      width: 100%;
+      transition: transform .5s var(--ease)
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.04)
+    }
+
+    .gallery-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0, 0, 0, .8));
+      padding: 1rem .8rem .6rem;
+      font-family: var(--fm);
+      font-size: .6rem;
+      color: var(--yellow);
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      opacity: 0;
+      transition: opacity .3s
+    }
+
+    .gallery-item:hover .gallery-label {
+      opacity: 1
+    }
+
+    /* videos */
+    #videos {
+      padding: 8rem 4rem
+    }
+
+    .vid-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem
+    }
+
+    .video-card {
+      background: #111;
+      border: 1px solid #222;
+      border-top: 3px solid var(--yellow);
+      overflow: hidden;
+      transition: border-top-color .3s, transform .3s
+    }
+
+    .video-card:hover {
+      border-top-color: var(--white);
+      transform: scale(1.02)
+    }
+
+    .video-card iframe {
+      width: 100%;
+      aspect-ratio: 9/16;
+      display: block;
+      border: none
+    }
+
+    .video-label {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .8rem;
+      font-family: var(--fm);
+      font-size: .65rem;
+      color: var(--white)
+    }
+
+    .vid-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--yellow);
+      flex-shrink: 0
+    }
+
+    /* contact */
+    #contact {
+      padding: 8rem 4rem 4rem
+    }
+
+    .contact-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      font-family: var(--fm);
+      font-size: .65rem;
+      color: var(--yellow);
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      margin-bottom: 2rem
+    }
+
+    .blink-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--yellow);
+      animation: blink 1.8s infinite
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .2
+      }
+    }
+
+    .contact-email {
+      font-family: var(--fd);
+      font-size: clamp(2rem, 5vw, 4.5rem);
+      color: var(--white);
+      display: inline-block;
+      position: relative;
+      overflow: hidden;
+      transition: color .3s
+    }
+
+    .contact-email::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 1.5px;
+      background: var(--yellow);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .4s var(--ease)
+    }
+
+    .contact-email:hover {
+      color: var(--yellow)
+    }
+
+    .contact-email:hover::after {
+      transform: scaleX(1)
+    }
+
+    .footer-rule {
+      width: 100%;
+      height: 1px;
+      background: var(--yellow);
+      margin: 3rem 0
+    }
+
+    .footer-bot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center
+    }
+
+    .footer-info {
+      font-family: var(--fm);
+      font-size: .65rem;
+      color: #555
+    }
+
+    .footer-links a {
+      font-family: var(--fm);
+      font-size: .65rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      margin-left: 2rem;
+      transition: color .25s
+    }
+
+    .footer-links a:hover {
+      color: var(--white)
+    }
+
+    .footer-copy {
+      text-align: center;
+      font-family: var(--fm);
+      font-size: .6rem;
+      color: #333;
+      margin-top: 4rem
+    }
+
+    /* reveals */
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(40px)
+    }
+
+    [data-reveal].is-visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity .8s var(--ease), transform .8s var(--ease)
+    }
+
+    /* mobile */
+    @media(max-width:768px) {
+      #nav {
+        padding: 1rem 1.5rem
+      }
+
+      .nav-links {
+        display: none
+      }
+
+      #hamburger {
+        display: flex
+      }
+
+      #hero {
+        grid-template-columns: 1fr;
+        padding: 0 1.5rem;
+        padding-top: 88px
+      }
+
+      .hero-right {
+        display: none
+      }
+
+      .scroll-ind {
+        left: 1.5rem
+      }
+
+      .ach-banner {
+        flex-direction: column;
+        gap: .5rem;
+        text-align: center;
+        padding: 1.2rem 1.5rem
+      }
+
+      .ach-right {
+        text-align: center
+      }
+
+      #work,
+      #about,
+      #people,
+      #gallery,
+      #videos {
+        padding: 5rem 1.5rem
+      }
+
+      #contact {
+        padding: 5rem 1.5rem 3rem
+      }
+
+      .project-row {
+        grid-template-columns: 60px 1fr;
+        gap: 1rem
+      }
+
+      .proj-right {
+        display: none
+      }
+
+      .about-cols {
+        grid-template-columns: 1fr;
+        gap: 3rem
+      }
+
+      #impact {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        padding: 4rem 1.5rem
+      }
+
+      .masonry {
+        column-count: 1
+      }
+
+      .vid-grid {
+        grid-template-columns: 1fr
+      }
+
+      .footer-bot {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center
+      }
+
+      .footer-links a {
+        margin-left: 0;
+        margin-right: 1.5rem
+      }
+
+      #cursor-dot,
+      #cursor-ring {
+        display: none
+      }
+
+      body {
+        cursor: auto
+      }
+    }
+
+    @media(min-width:769px) and (max-width:1024px) {
+      .masonry {
+        column-count: 2
+      }
+
+      .vid-grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .ach-banner {
+        padding: 1.5rem 2rem
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Scroll Progress -->
+  <div id="scroll-progress"></div>
+  <!-- Grain -->
+  <div id="grain"></div>
+  <!-- Cursor -->
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- Preloader -->
+  <div id="preloader">
+    <div class="pre-top"><span>ENACTUS ZHDC</span></div>
+    <div class="pre-bot"></div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mob-menu">
+    <button id="mob-close">✕</button>
+    <a href="#work">Work</a>
+    <a href="#people">People</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#videos">Videos</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+
+  <!-- Navbar -->
+  <nav id="nav">
+    <a href="#hero" class="nav-logo">ENACTUS ZHDC</a>
+    <div class="nav-links">
+      <a href="#work">Work</a>
+      <a href="#people">People</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#videos">Videos</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <button id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+
+  <!-- Hero -->
+  <section id="hero">
+    <div class="hero-left">
+      <h1 class="hero-headline">
+        <span class="line-wrap"><span class="line-inner">CREATING</span></span>
+        <span class="line-wrap"><span class="line-inner">REAL</span></span>
+        <span class="line-wrap"><span class="line-inner"><span class="accent">IMPACT.</span></span></span>
+      </h1>
+      <p class="hero-sub">Enactus ZHDC — Student entrepreneurs building ventures that change lives. Based in New Delhi.
+      </p>
+      <div class="hero-stats">
+        <div class="stat-item"><span class="stat-num">4</span><span class="stat-lbl">Projects</span></div>
+        <div class="stat-item"><span class="stat-num">2026-27</span><span class="stat-lbl">Session</span></div>
+        <div class="stat-item"><span class="stat-num">Top 20</span><span class="stat-lbl">Nationals</span></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-card"><span class="card-label">A001 — Project Qumash</span><img src="img-qumash.jpg" alt="Project Qumash"></div>
+      <div class="hero-card"><span class="card-label">A002 — Project Ateera</span><img src="img-ateera.png" alt="Project Ateera"></div>
+    </div>
+    <div class="scroll-ind">
+      <span>SCROLL</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- Achievement Banner -->
+  <div class="ach-banner" id="ach-banner">
+    <div class="ach-left"> PROJECT NEERJA</div>
+    <div class="ach-center">Selected for Enactus India Nationals · Secured a Position in the Top 20</div>
+    <div class="ach-right">Project Head: Syed Haseeb Rizvi · Concluded</div>
+  </div>
+
+  <!-- Marquee -->
+  <div class="marquee">
+    <div class="marquee-track">
+      <span>ENTREPRENEURSHIP</span><span>◆</span><span>SOCIAL IMPACT</span><span>◆</span><span>ENACTUS
+        ZHDC</span><span>◆</span><span>NEW
+        DELHI</span><span>◆</span><span>UPCYCLING</span><span>◆</span><span>SUSTAINABILITY</span><span>◆</span><span>FRAGRANCE</span><span>◆</span><span>LUXURY</span><span>◆</span>
+      <span>ENTREPRENEURSHIP</span><span>◆</span><span>SOCIAL IMPACT</span><span>◆</span><span>ENACTUS
+        ZHDC</span><span>◆</span><span>NEW
+        DELHI</span><span>◆</span><span>UPCYCLING</span><span>◆</span><span>SUSTAINABILITY</span><span>◆</span><span>FRAGRANCE</span><span>◆</span><span>LUXURY</span><span>◆</span>
+    </div>
+  </div>
+
+  <!-- Hover Images (fixed, follow cursor) -->
+  <!-- ADD YOUR IMAGE for each project row -->
+  <div class="hov-img" id="himg-0"><img
+      src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&auto=format" alt="Qumash"></div>
+  <div class="hov-img" id="himg-1"><img
+      src="https://images.unsplash.com/photo-1604881991720-f91add269bed?w=400&auto=format" alt="Ateera"></div>
+  <div class="hov-img" id="himg-2"><img
+      src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&auto=format" alt="Tann"></div>
+  <div class="hov-img" id="himg-3"><img
+      src="https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&auto=format" alt="Sera"></div>
+  <div class="hov-img" id="himg-4"><img
+      src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400&auto=format" alt="Neerja"></div>
+
+  <!-- Work -->
+  <section id="work">
+    <div data-reveal>
+      <p class="sec-eyebrow">[ Work ]</p>
+      <h2 class="sec-title">Our Projects</h2>
+    </div>
+
+    <div class="proj-group-label">[ Since 2024 — Still in Production ]</div>
+
+    <div class="project-row" data-project="0">
+      <span class="proj-num">01</span>
+      <div class="proj-info">
+        <span class="proj-lead">Lead: Aditi Jain</span>
+        <h3 class="proj-name">Project Qumash</h3>
+        <p class="proj-tagline">"giving dead clothes a better comeback story than most celebrities"</p>
+        <p class="proj-desc">Repurposing discarded clothes into functional and practical products.</p>
+      </div>
+      <div class="proj-right">
+        <span class="proj-tag">Upcycling</span>
+        <span class="proj-since">Since 2024 →</span>
+      </div>
+    </div>
+
+    <div class="project-row" data-project="1">
+      <span class="proj-num">02</span>
+      <div class="proj-info">
+        <span class="proj-lead">Lead: Dhruv Goyal</span>
+        <h3 class="proj-name">Project Ateera</h3>
+        <p class="proj-tagline"><em>Eco-friendly scented candles with an Indian touch.</em></p>
+        <p class="proj-desc">Creating sustainable, culturally rooted candles for conscious consumers.</p>
+      </div>
+      <div class="proj-right">
+        <span class="proj-tag">Sustainability</span>
+        <span class="proj-since">Since 2024 →</span>
+      </div>
+    </div>
+
+    <div class="proj-group-label">[ Since 2025 — Still in Production ]</div>
+
+    <div class="project-row" data-project="2">
+      <span class="proj-num">03</span>
+      <div class="proj-info">
+        <span class="proj-lead">Lead: Shiven</span>
+        <h3 class="proj-name">Project Tann</h3>
+        <p class="proj-tagline">"Bold, timeless accessories crafted with purpose and character."</p>
+        <p class="proj-desc">Redefining luxury by transforming discarded leather scraps into premium accessories.</p>
+      </div>
+      <div class="proj-right">
+        <span class="proj-tag">Luxury</span>
+        <span class="proj-since">Since 2025 →</span>
+      </div>
+    </div>
+
+    <div class="project-row" data-project="3">
+      <span class="proj-num">04</span>
+      <div class="proj-info">
+        <span class="proj-lead">Lead: Saksham Tandon</span>
+        <h3 class="proj-name">Project Sera</h3>
+        <p class="proj-tagline">"make strangers lean closer, exes regret faster, your presence impossible to ignore."
+        </p>
+        <p class="proj-desc">Perfumes and roll-ons crafted for presence, memory, and personality.</p>
+      </div>
+      <div class="proj-right">
+        <span class="proj-tag">Fragrance</span>
+        <span class="proj-since">Since 2025 →</span>
+      </div>
+    </div>
+
+    <div class="proj-group-label muted">[ Concluded ]</div>
+
+    <div class="project-row concluded" data-project="4">
+      <span class="proj-num">05</span>
+      <div class="proj-info">
+        <span class="proj-lead">Lead: Syed Haseeb Rizvi</span>
+        <h3 class="proj-name">Project Neerja</h3>
+        <p class="proj-tagline"><em>Selected for Enactus India Nationals · Top 20</em></p>
+      </div>
+      <div class="proj-right">
+        <span class="proj-badge">🏆 Nationals Top 20</span>
+        <span class="proj-since">Concluded</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div class="about-quote">We believe entrepreneurship is the most powerful tool to create lasting, equitable change.
+    </div>
+    <div class="about-cols" data-reveal>
+      <div class="about-left">
+        <p class="sec-eyebrow">About Us</p>
+        <p>Enactus ZHDC is the official entrepreneurship society of Zakir Husain Delhi College, University of Delhi. We
+          are part of Enactus India — the world's largest experiential learning platform connecting student, academic
+          and business leaders through entrepreneurial action.</p>
+        <p>Since our founding, we have built ventures that touch real lives — from artisan communities in Old Delhi to
+          farming families in rural Haryana. We compete at regional and national Enactus competitions, representing our
+          college on India's biggest stages.</p>
+      </div>
+      <div class="values-list">
+        <div class="val-item">
+          <div class="val-num">01</div>
+          <div class="val-name">Act</div>
+          <div class="val-desc">Ideas mean nothing without execution</div>
+        </div>
+        <div class="val-item">
+          <div class="val-num">02</div>
+          <div class="val-name">Build</div>
+          <div class="val-desc">We create real ventures, not just plans</div>
+        </div>
+        <div class="val-item">
+          <div class="val-num">03</div>
+          <div class="val-name">Measure</div>
+          <div class="val-desc">Impact is counted in lives changed</div>
+        </div>
+        <div class="val-item">
+          <div class="val-num">04</div>
+          <div class="val-name">Scale</div>
+          <div class="val-desc">Local solutions with national ambition</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact -->
+  <section id="impact">
+    <div class="imp-item" data-reveal>
+      <span class="imp-num" id="count-0">0</span>
+      <span class="imp-lbl">Lives Impacted</span>
+    </div>
+    <div class="imp-item" data-reveal>
+      <span class="imp-num" id="count-1">0</span>
+      <span class="imp-lbl">Revenue Generated</span>
+    </div>
+    <div class="imp-item" data-reveal>
+      <span class="imp-num" id="count-2">0</span>
+      <span class="imp-lbl">National Rounds</span>
+    </div>
+  </section>
+
+  <!-- People -->
+  <section id="people">
+    <p class="ppl-sub-eyebrow">[ Top Core ]</p>
+    <h2 class="ppl-title">Leadership</h2>
+    <p class="ppl-session">Session 2026–27</p>
+
+    <div class="people-row">
+      <div>
+        <div class="ppl-role">President</div>
+        <div class="ppl-name">Yashwanth Nag</div>
+      </div>
+      <div class="ppl-idx">01</div>
+    </div>
+    <div class="people-row">
+      <div>
+        <div class="ppl-role">Vice President</div>
+        <div class="ppl-name">Md. Faisal</div>
+      </div>
+      <div class="ppl-idx">02</div>
+    </div>
+    <div class="people-row">
+      <div>
+        <div class="ppl-role">Project Co-ordinator</div>
+        <div class="ppl-name">Mridul Tiwari</div>
+      </div>
+      <div class="ppl-idx">03</div>
+    </div>
+    <div class="people-row">
+      <div>
+        <div class="ppl-role">Advisory</div>
+        <div class="ppl-name">Prisha Dudeja</div>
+      </div>
+      <div class="ppl-idx">04</div>
+    </div>
+
+    <div class="dept-sub">
+      <p class="ppl-sub-eyebrow">[ Department Heads ]</p>
+      <h2 class="ppl-title">The Team</h2>
+      <p class="ppl-session">Session 2026–27</p>
+      <div class="people-row dept">
+        <div>
+          <div class="ppl-role">Digitals Head</div>
+          <div class="ppl-name" style="font-size:2rem">Samaira Dhawan</div>
+        </div>
+        <div class="ppl-idx">01</div>
+      </div>
+      <div class="people-row dept">
+        <div>
+          <div class="ppl-role">Finance Head</div>
+          <div class="ppl-name" style="font-size:2rem">Adamya Saxena</div>
+        </div>
+        <div class="ppl-idx">02</div>
+      </div>
+      <div class="people-row dept">
+        <div>
+          <div class="ppl-role">Public Relations Head</div>
+          <div class="ppl-name" style="font-size:2rem">Gauri Bahuguna</div>
+        </div>
+        <div class="ppl-idx">03</div>
+      </div>
+      <div class="people-row dept">
+        <div>
+          <div class="ppl-role">Research Head</div>
+          <div class="ppl-name" style="font-size:2rem">Pallavi CJ</div>
+        </div>
+        <div class="ppl-idx">04</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section id="gallery">
+    <p class="sec-eyebrow">[ Gallery ]</p>
+    <h2 class="sec-title">Moments</h2>
+    <p class="gal-subtitle">Enactus ZHDC — Session 2025–26 · Moments that matter.</p>
+    <div class="masonry">
+
+      <!-- ══ GROUP PHOTOS ══ -->
+      <div class="gallery-item"><img src="images/group neerja-nationals.webp" alt="Enactus ZHDC at Nationals"><div class="gallery-label">🏆 Nationals Top 20</div></div>
+      <div class="gallery-item"><img src="images/group session25-26.png" alt="Enactus ZHDC Session 2025-26"><div class="gallery-label">Session 2025–26</div></div>
+      <div class="gallery-item"><img src="images/group session-poster.png" alt="Enactus ZHDC"><div class="gallery-label">Enactus ZHDC</div></div>
+
+      <!-- ══ PROJECT GROUPS ══ -->
+      <div class="gallery-item"><img src="images/group Project Qumash- Proj (1).png" alt="Project Qumash"><div class="gallery-label">Project Qumash</div></div>
+      <div class="gallery-item"><img src="images/group Project Qumash- Proj (2).png" alt="Project Ateera"><div class="gallery-label">Project Ateera</div></div>
+      <div class="gallery-item"><img src="images/group Project Qumash- Proj (3).png" alt="Project Neerja"><div class="gallery-label">Project Neerja</div></div>
+      <div class="gallery-item"><img src="images/group Project Qumash- Proj (4).png" alt="Project Kaira"><div class="gallery-label">Project Kaira</div></div>
+
+      <!-- ══ DEPARTMENT GROUPS ══ -->
+      <div class="gallery-item"><img src="images/Group Digital.jpg" alt="Digitals Team"><div class="gallery-label">Digitals Team</div></div>
+      <div class="gallery-item"><img src="images/Group finance.jpg" alt="Finance Team"><div class="gallery-label">Finance Team</div></div>
+      <div class="gallery-item"><img src="images/Group PR.jpg" alt="Public Relations Team"><div class="gallery-label">Public Relations</div></div>
+      <div class="gallery-item"><img src="images/group r&d.jpg" alt="Research & Development"><div class="gallery-label">Research &amp; Development</div></div>
+
+      <!-- ══ TEAM MEMBERS ══ -->
+      <div class="gallery-item"><img src="images/aditi.jpg" alt="Aditi"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/anchal.jpg" alt="Anchal"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/anmol.jpg" alt="Anmol"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/Aryan.jpg" alt="Aryan"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/ayush.jpg" alt="Ayush"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/divyang.jpg" alt="Divyang"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/jayita.jpg" alt="Jayita"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/Jerin.jpg" alt="Jerin"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/jio.jpg" alt="Jio"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/kirti.jpg" alt="Kirti"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/lakshya.jpg" alt="Lakshya"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/nandini.jpg" alt="Nandini"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/prachi.jpg" alt="Prachi"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/pranjal.jpg" alt="Pranjal"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/priyanshu.jpg" alt="Priyanshu"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/psycho.jpg" alt="Enactus ZHDC"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/samriddhi.jpg" alt="Samriddhi"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/sanskriti.jpg" alt="Sanskriti"><div class="gallery-label">Enactus ZHDC</div></div>
+      <div class="gallery-item"><img src="images/syed haseeb.jpg" alt="Syed Haseeb"><div class="gallery-label">Enactus ZHDC</div></div>
+
+    </div>
+  </section>
+
+  <!-- UPDATE: Replace "Enactus ZHDC" labels with actual video descriptions once confirmed -->
+  <!-- Videos -->
+  <section id="videos">
+    <p class="sec-eyebrow">[ In Action ]</p>
+    <h2 class="sec-title">Watch Us Work</h2>
+    <div class="vid-grid">
+      <div class="video-card"><iframe src="https://www.youtube.com/embed/nh94iw8rzhk" allow="autoplay;encrypted-media"
+          allowfullscreen loading="lazy"></iframe>
+        <div class="video-label"><span class="vid-dot"></span>Enactus ZHDC</div>
+      </div>
+      <div class="video-card"><iframe src="https://www.youtube.com/embed/VSa7Z2Fn9kY" allow="autoplay;encrypted-media"
+          allowfullscreen loading="lazy"></iframe>
+        <div class="video-label"><span class="vid-dot"></span>Enactus ZHDC</div>
+      </div>
+      <div class="video-card"><iframe src="https://www.youtube.com/embed/zS0pMTzuKl0" allow="autoplay;encrypted-media"
+          allowfullscreen loading="lazy"></iframe>
+        <div class="video-label"><span class="vid-dot"></span>Enactus ZHDC</div>
+      </div>
+      <div class="video-card"><iframe src="https://www.youtube.com/embed/0VbAjvA8LAQ" allow="autoplay;encrypted-media"
+          allowfullscreen loading="lazy"></iframe>
+        <div class="video-label"><span class="vid-dot"></span>Enactus ZHDC</div>
+      </div>
+      <div class="video-card"><iframe src="https://www.youtube.com/embed/6gQvNCeAoG8" allow="autoplay;encrypted-media"
+          allowfullscreen loading="lazy"></iframe>
+        <div class="video-label"><span class="vid-dot"></span>Enactus ZHDC</div>
+      </div>
+      <div class="video-card"><iframe src="https://www.youtube.com/embed/bqlrFP4LZ5Q" allow="autoplay;encrypted-media"
+          allowfullscreen loading="lazy"></iframe>
+        <div class="video-label"><span class="vid-dot"></span>Enactus ZHDC</div>
+      </div>
+      <div class="video-card"><iframe src="https://www.youtube.com/embed/2fzrBFZFfNk" allow="autoplay;encrypted-media"
+          allowfullscreen loading="lazy"></iframe>
+        <div class="video-label"><span class="vid-dot"></span>Enactus ZHDC</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact / Footer -->
+  <footer id="contact">
+    <div class="contact-eyebrow"><span class="blink-dot"></span>Currently Open for Collaborations</div>
+    <a href="mailto:enactuszhdc@gmail.com" class="contact-email">enactuszhdc@gmail.com</a>
+    <div class="footer-rule"></div>
+    <div class="footer-bot">
+      <span class="footer-info">ENACTUS ZHDC — Zakir Husain Delhi College, New Delhi</span>
+      <div class="footer-links">
+        <a href="https://www.instagram.com/enact.us.zhdc/?hl=en" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.linkedin.com/company/enactus-zhdc/?originalSubdomain=in" target="_blank"
+          rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+    <p class="footer-copy">© 2026 Enactus ZHDC · Session 2026–27 · All rights reserved</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Scroll progress
+      const prog = document.getElementById('scroll-progress');
+      window.addEventListener('scroll', () => {
+        prog.style.width = (window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100) + '%';
+      });
+
+      // Cursor
+      const dot = document.getElementById('cursor-dot');
+      const ring = document.getElementById('cursor-ring');
+      let rx = 0, ry = 0, mx = 0, my = 0;
+      document.addEventListener('mousemove', e => {
+        mx = e.clientX; my = e.clientY;
+        dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+      });
+      (function lerpRing() {
+        rx += (mx - rx) * 0.08; ry += (my - ry) * 0.08;
+        ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+        requestAnimationFrame(lerpRing);
+      })();
+      document.querySelectorAll('a,button,.video-card,.gallery-item').forEach(el => {
+        el.addEventListener('mouseenter', () => ring.classList.add('hov'));
+        el.addEventListener('mouseleave', () => ring.classList.remove('hov'));
+      });
+      document.querySelectorAll('.project-row').forEach(el => {
+        el.addEventListener('mouseenter', () => { ring.classList.remove('hov'); ring.classList.add('view'); });
+        el.addEventListener('mouseleave', () => ring.classList.remove('view'));
+      });
+      const hl = document.querySelector('.hero-headline');
+      if (hl) {
+        hl.addEventListener('mouseenter', () => { ring.classList.remove('hov'); ring.classList.add('head'); });
+        hl.addEventListener('mouseleave', () => ring.classList.remove('head'));
+      }
+
+      // Navbar
+      const nav = document.getElementById('nav');
+      window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 80));
+
+      // Mobile menu
+      const mob = document.getElementById('mob-menu');
+      document.getElementById('hamburger').addEventListener('click', () => mob.classList.add('open'));
+      document.getElementById('mob-close').addEventListener('click', () => mob.classList.remove('open'));
+      mob.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mob.classList.remove('open')));
+
+      // Smooth anchor scroll
+      document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+          const t = document.querySelector(a.getAttribute('href'));
+          if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+        });
+      });
+
+      // Preloader → hero
+      gsap.set('.line-inner', { y: '110%', rotateX: 8 });
+      gsap.set('.hero-headline', { opacity: 1 });
+      gsap.set('.hero-sub', { opacity: 0, y: 20 });
+      gsap.set('.hero-card', { opacity: 0, y: 40 });
+      gsap.set('.card-label', { opacity: 0 });
+
+      function initHero() {
+        gsap.to('.line-inner', { y: 0, rotateX: 0, duration: 1.1, stagger: 0.1, ease: 'expo.out' });
+        gsap.to('.hero-sub', { opacity: 1, y: 0, duration: 0.8, delay: 0.6, ease: 'power3.out' });
+        gsap.to('.hero-card', { opacity: 1, y: 0, duration: 0.9, stagger: 0.15, delay: 0.7, ease: 'expo.out' });
+        gsap.to('.card-label', { opacity: 1, duration: 0.5, stagger: 0.1, delay: 1.2 });
+      }
+
+      gsap.timeline({
+        onComplete: () => {
+          document.getElementById('preloader').style.display = 'none';
+          initHero();
+        }
+      })
+        .to('.pre-top', { yPercent: -100, duration: 1, ease: 'expo.inOut' }, 1.3)
+        .to('.pre-bot', { yPercent: 100, duration: 1, ease: 'expo.inOut' }, 1.3);
+
+      // Achievement banner
+      gsap.fromTo('#ach-banner',
+        { x: -60, opacity: 0 },
+        {
+          x: 0, opacity: 1, duration: 1, ease: 'expo.out',
+          scrollTrigger: { trigger: '#ach-banner', start: 'top 85%' }
+        });
+
+      // Project row hover images
+      document.querySelectorAll('.project-row').forEach(row => {
+        const idx = row.getAttribute('data-project');
+        const img = document.getElementById('himg-' + idx);
+        if (!img) return;
+        const xTo = gsap.quickTo(img, 'x', { duration: 0.5, ease: 'power3' });
+        const yTo = gsap.quickTo(img, 'y', { duration: 0.5, ease: 'power3' });
+        row.addEventListener('mouseenter', () => gsap.to(img, { opacity: 1, scale: 1, duration: 0.4, ease: 'power3.out' }));
+        row.addEventListener('mouseleave', () => gsap.to(img, { opacity: 0, scale: 0.85, duration: 0.3 }));
+        row.addEventListener('mousemove', e => { xTo(e.clientX - 130); yTo(e.clientY - 80); });
+      });
+
+      // Work rows
+      gsap.from('.project-row', {
+        x: -60, opacity: 0, duration: 0.8, stagger: 0.1, ease: 'expo.out',
+        scrollTrigger: { trigger: '#work', start: 'top 75%' }
+      });
+
+      // People rows
+      gsap.from('.people-row', {
+        x: -40, opacity: 0, duration: 0.8, stagger: 0.08, ease: 'expo.out',
+        scrollTrigger: { trigger: '#people', start: 'top 75%' }
+      });
+
+      // About quote scrub
+      gsap.fromTo('.about-quote',
+        { opacity: 0, scale: 0.85 },
+        { opacity: 1, scale: 1, scrollTrigger: { trigger: '.about-quote', start: 'top 80%', end: 'center center', scrub: 1 } });
+
+      // Impact counters
+      function animateCount(el, target, prefix, suffix) {
+        const obj = { val: 0 };
+        gsap.to(obj, {
+          val: target, duration: 2, ease: 'power2.out',
+          scrollTrigger: { trigger: el, start: 'top 80%', once: true },
+          onUpdate() { el.textContent = prefix + Math.round(obj.val).toLocaleString('en-IN') + suffix; }
+        });
+      }
+      animateCount(document.getElementById('count-0'), 5200, '', '+');
+      animateCount(document.getElementById('count-1'), 18, '₹', 'L+');
+      animateCount(document.getElementById('count-2'), 3, '', '×');
+
+      // Gallery
+      gsap.from('.gallery-item', {
+        opacity: 0, y: 30, duration: 0.7, stagger: 0.07, ease: 'expo.out',
+        scrollTrigger: { trigger: '#gallery', start: 'top 80%' }
+      });
+
+      // Videos
+      gsap.from('.video-card', {
+        opacity: 0, y: 30, duration: 0.7, stagger: 0.08, ease: 'expo.out',
+        scrollTrigger: { trigger: '#videos', start: 'top 80%' }
+      });
+
+      // Section reveals
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-visible'); obs.unobserve(e.target); } });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('[data-reveal]').forEach(el => {
+        el.style.opacity = '0'; el.style.transform = 'translateY(40px)';
+        obs.observe(el);
+      });
+    });
+  </script>
+</body>
+
+</html>
